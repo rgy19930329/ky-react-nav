@@ -1,0 +1,27 @@
+@import "~@app/vars.less";
+
+.comp-link-card {
+  display: inline-block;
+
+  .comp-link-card-inner {
+    position: relative;
+
+    .a-link {
+      padding: 3px 8px;
+      display: block;
+      max-width: 150px;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      border-radius: 16px 16px 16px 0;
+      border: 1px solid @color-main;
+    }
+  
+    .a-close {
+      color: @color-error;
+      position: absolute;
+      left: -9px;
+      top: -8px;
+    }
+  }
+}
