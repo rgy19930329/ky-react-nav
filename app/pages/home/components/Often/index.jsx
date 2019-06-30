@@ -6,7 +6,7 @@
 
 import "./index.less";
 import React from "react";
-import { Icon } from "antd";
+import Title from "../Title";
 import LinkCard from "../LinkCard";
 
 export default class Often extends React.Component {
@@ -37,7 +37,7 @@ export default class Often extends React.Component {
 		}
 		return (
 			<div className="comp-often">
-        <h3><Icon type="appstore" /> 常用</h3>
+				<Title>常用</Title>
 				<div className="comp-often-list">
 					{dataSource.map(item => {
 						const { name, url } = item;

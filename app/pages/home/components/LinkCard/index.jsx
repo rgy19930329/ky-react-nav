@@ -1,5 +1,5 @@
 /**
- * 头部组件
+ * 链接组件
  * @author ranguangyu
  * @date 2019-6-28
  */
@@ -7,14 +7,16 @@
 import "./index.less";
 import React from "react";
 import { Icon, Popover, Input } from "antd";
+import { debounce } from "lodash";
 
 export default class LinkCard extends React.Component {
   static defaultProps = {
     mode: "read",
     children: "默认标签",
-    url: "https://www.baidu.com",
+    url: "",
     gutter: 10,
     hasClose: false,
+    simple: false,
     onDelete: () => { },
     onChange: () => { },
   }
@@ -26,10 +28,18 @@ export default class LinkCard extends React.Component {
       name: props.children,
       url: props.url,
     }
+
+    this.handleDebounce = debounce(this.getData, 1000);
   }
 
   openUrl = (url) => {
     window.open(url, "_blank");
+  };
+
+  getData = () => {
+    const { onChange } = this.props;
+    const { name, url } = this.state;
+    onChange && onChange({ name, url });
   };
 
   render() {
@@ -37,10 +47,54 @@ export default class LinkCard extends React.Component {
       mode,
       gutter,
       hasClose,
+      simple,
       onDelete,
       onChange,
     } = this.props;
     const { name, url } = this.state;
+    const popoverContent = (
+      <div>
+        <h5>name:</h5>
+        <div>
+          <Input
+            value={name}
+            onChange={(e) => {
+              e.persist();
+              this.setState({ name: e.target.value });
+              this.handleDebounce();
+            }}
+          />
+        </div>
+        <h5>url:</h5>
+        <div>
+          <Input
+            value={url}
+            onChange={(e) => {
+              e.persist();
+              this.setState({ url: e.target.value });
+              this.handleDebounce();
+            }}
+          />
+        </div>
+      </div>
+    );
+    if (simple) {
+      return (
+        <div className="comp-link-card">
+          <Popover
+            trigger="hover"
+            content={popoverContent}
+          >
+            <a
+              className="a-link"
+              onClick={() => this.openUrl(url)}
+            >
+              <Icon type="paper-clip" /> {name}
+            </a>
+          </Popover>
+        </div>
+      )
+    }
     const pd = Math.floor(gutter / 2);
     if (mode === "edit") {
       return (
@@ -51,20 +105,7 @@ export default class LinkCard extends React.Component {
           <div className="comp-link-card-inner">
             <Popover
               trigger="hover"
-              content={(
-                <div>
-                  <h5>name:</h5>
-                  <div><Input value={name} onChange={(e) => {
-                    this.setState({ name: e.target.value });
-                    onChange && onChange({ name: e.target.value, url });
-                  }} /></div>
-                  <h5>url:</h5>
-                  <div><Input value={url} onChange={(e) => {
-                    this.setState({ url: e.target.value });
-                    onChange && onChange({ name, url: e.target.value });
-                  }} /></div>
-                </div>
-              )}
+              content={popoverContent}
             >
               <a
                 className="a-link"
