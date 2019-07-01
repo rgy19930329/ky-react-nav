@@ -1,7 +1,7 @@
 export default {
   treeData: [
     {
-      "title": "书签分类",
+      "title": "书签栏",
       "key": "root",
       "children": [
         {

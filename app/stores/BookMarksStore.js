@@ -7,7 +7,7 @@
 import { observable, action } from "mobx";
 
 export default class BookMarksStore {
-  @observable status = "edit"; // 页面状态
+  @observable status = "read"; // 页面状态
 
   @action
   goEdit() {
