@@ -60,9 +60,19 @@ const set = (ref, item) => {
   ref.set(filter(item));
 };
 
+/**
+ * 获取数据
+ */
+const get = (ref, fn) => {
+  ref.on("value", (snap) => {
+    fn && fn(snap.val());
+  });
+};
+
 export {
   each,
   remove,
   add,
-  set, 
+  set,
+  get,
 }

@@ -11,7 +11,12 @@ import { debounce } from "lodash";
 
 export default class FolderCard extends React.Component {
   static defaultProps = {
+    mode: "read",
+    isRoot: false,
     children: "文件夹",
+    addFolder: () => { },
+    addLink: () => { },
+    delFolder: () => { },
   }
 
   constructor(props) {
@@ -31,8 +36,15 @@ export default class FolderCard extends React.Component {
   };
 
   render() {
-    const { isRoot, addFolder, addLink, delFolder } = this.props;
+    const { mode, isRoot, addFolder, addLink, delFolder } = this.props;
     const { name } = this.state;
+    if (mode === "read") {
+      return (
+        <div className="comp-folder-card">
+          {name}
+        </div>
+      )
+    }
     const popoverContent = (
       <div>
         <h5>name:</h5>

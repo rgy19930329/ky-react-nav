@@ -1,7 +1,5 @@
-import TodoListStore from "./TodoListStore";
-import AuthStore from "./AuthStore";
+import BookMarksStore from "./BookMarksStore";
 
 export default {
-  todoListStore: new TodoListStore(),
-  authStore: new AuthStore(),
+  bookMarksStore: new BookMarksStore(),
 }

@@ -18,8 +18,8 @@ class Title extends React.Component {
     const { icon, children, slotRight } = this.props;
     return (
       <div className="comp-title">
-        <h3><Icon type={icon} /> {children}</h3>
-        <div>{slotRight}</div>
+        <h3><Icon type={icon} style={{marginRight: 12}} />{children}</h3>
+        <div className="slot-right">{slotRight}</div>
       </div>
     )
   }

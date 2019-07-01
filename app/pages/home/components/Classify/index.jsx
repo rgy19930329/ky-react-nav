@@ -9,23 +9,27 @@ import React from "react";
 import Title from "../Title";
 import LinkCard from "../LinkCard";
 import FolderCard from "../FolderCard";
-import { Tree } from "antd";
-import mock from "./data";
+import { Tree, Icon } from "antd";
 import uuid from "node-uuid";
-
-const { treeData } = mock;
+import { get, set } from "@utils/wdio";
+import ImportModal from "../ImportModal";
 
 const { TreeNode, DirectoryTree } = Tree;
+const ref = new Wilddog("https://kylin.wilddogio.com/bookmarks");
 
 export default class Classify extends React.Component {
 
 	state = {
 		treeData: [],
 		expandedKeys: [],
+		visible: false, // 导入弹出框控制
 	};
 
 	componentDidMount() {
-		this.setState({ treeData, expandedKeys: ["root"] });
+		this.setState({ expandedKeys: ["root"] });
+		get(ref, (treeData) => {
+			this.setState({ treeData });
+		});
 	}
 
 	/**
@@ -92,7 +96,6 @@ export default class Classify extends React.Component {
 		treeData = this.dfs(treeData, key, (tree, i) => {
 			tree.splice(i, 1);
 		});
-		this.setState({ treeData });
 		this.onTreeChange(treeData);
 	};
 
@@ -104,7 +107,6 @@ export default class Classify extends React.Component {
 		treeData = this.dfs(treeData, key, (tree, i) => {
 			tree[i].title = name;
 		});
-		this.setState({ treeData });
 		this.onTreeChange(treeData);
 	};
 
@@ -117,7 +119,6 @@ export default class Classify extends React.Component {
 			tree[i].title = name;
 			tree[i].url = url;
 		});
-		this.setState({ treeData });
 		this.onTreeChange(treeData);
 	};
 
@@ -125,19 +126,21 @@ export default class Classify extends React.Component {
 	 * 监听树的变化
 	 */
 	onTreeChange = (treeData) => {
-		console.log(treeData);
+		// this.setState({ treeData });
+		console.log("树结构有变化: ", treeData);
+		set(ref, treeData);
 	};
 
 	renderTreeNodes = (data) => {
 		return data.map(item => {
 			const addTitle = (
 				<FolderCard
+					mode="edit"
 					isRoot={item.key === "root"}
 					addFolder={() => this.addFolder(item.key)}
 					addLink={() => this.addLink(item.key)}
 					delFolder={() => this.delOneItem(item.key)}
 					onChange={({ name }) => {
-						console.log(name);
 						this.updateFolder(item.key, { name });
 					}}
 				>
@@ -159,17 +162,29 @@ export default class Classify extends React.Component {
 					title={
 						item.isLeaf ?
 							(
-								<LinkCard
-									mode="edit"
-									url={item.url}
-									simple
-									onChange={({ name, url }) => {
-										console.log(name, url);
-										this.updateLink(item.key, { name, url });
-									}}
-								>
-									{item.title}
-								</LinkCard>
+								<span>
+									<LinkCard
+										mode="edit"
+										url={item.url}
+										simple
+										onChange={({ name, url }) => {
+											this.updateLink(item.key, { name, url });
+										}}
+									>
+										{item.title}
+									</LinkCard>
+									<a
+										style={{ marginLeft: 10 }}
+										className="icon-delete"
+										onClick={(e) => {
+											e.stopPropagation();
+											this.delOneItem(item.key);
+										}}
+										title="删除标签"
+									>
+										<Icon type="close-circle" />
+									</a>
+								</span>
 							) : addTitle
 					}
 					key={item.key}
@@ -182,7 +197,20 @@ export default class Classify extends React.Component {
 	render() {
 		return (
 			<div className="comp-classify">
-				<Title>分类</Title>
+				<Title
+					icon="apartment"
+					slotRight={(
+						<a
+							title="标签导入"
+							onClick={() => this.setState({ visible: true })}
+							style={{ position: "relative", top: 10 }}
+						>
+							<Icon type="import" style={{ fontSize: 20 }} />
+						</a>
+					)}
+				>
+					分类
+				</Title>
 				<div className="comp-classify-inner">
 					<DirectoryTree
 						multiple
@@ -194,6 +222,17 @@ export default class Classify extends React.Component {
 						{this.renderTreeNodes(this.state.treeData)}
 					</DirectoryTree>
 				</div>
+				{this.state.visible &&
+					<ImportModal
+						visible={this.state.visible}
+						onCancel={() => this.setState({ visible: false })}
+						onChange={(treeData) => {
+							this.setState({ treeData: [] }, () => {
+								this.onTreeChange(treeData);
+							});
+						}}
+					/>
+				}
 			</div>
 		)
 	}

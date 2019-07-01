@@ -1,3 +1,5 @@
+@import "~@app/vars.less";
+
 .comp-classify {
   margin: 10px;
 
@@ -8,5 +10,9 @@
 
   .ant-tree.ant-tree-directory > li.ant-tree-treenode-selected > span.ant-tree-node-content-wrapper::before, .ant-tree.ant-tree-directory .ant-tree-child-tree > li.ant-tree-treenode-selected > span.ant-tree-node-content-wrapper::before {
     background: #bae7ff;
+  }
+
+  .icon-delete {
+    color: @color-error;
   }
 }

@@ -8,6 +8,7 @@ import "./index.less";
 import React from "react";
 import { Icon, Popover, Input } from "antd";
 import { debounce } from "lodash";
+import { set, get } from "@utils/storage";
 
 export default class LinkCard extends React.Component {
   static defaultProps = {
@@ -32,8 +33,33 @@ export default class LinkCard extends React.Component {
     this.handleDebounce = debounce(this.getData, 1000);
   }
 
-  openUrl = (url) => {
+  openUrl = ({ name, url }) => {
+    let bookmarks = get("bookmarks") || [];
+    let isFound = false; // 标签是否已经存在
+    for (let i = 0; i < bookmarks.length; i++) {
+      if (bookmarks[i].url === url) {
+        bookmarks[i]["number"] += 1;
+        isFound = true;
+        break;
+      }
+    }
+    if (!isFound) {
+      bookmarks.push({ name, url, number: 1 });
+      bookmarks = this.limitBookmarks(bookmarks);
+    }
+    set("bookmarks", bookmarks);
     window.open(url, "_blank");
+  };
+
+  /**
+   * 限制 bookmarks 数量不至于过大
+   */
+  limitBookmarks = (bookmarks) => {
+    if (bookmarks.length > 100) {
+      bookmarks = bookmarks.sort((a, b) => b.number - a.number).slice(0, 7);
+      return bookmarks;
+    }
+    return bookmarks;
   };
 
   getData = () => {
@@ -49,7 +75,6 @@ export default class LinkCard extends React.Component {
       hasClose,
       simple,
       onDelete,
-      onChange,
     } = this.props;
     const { name, url } = this.state;
     const popoverContent = (
@@ -81,17 +106,26 @@ export default class LinkCard extends React.Component {
     if (simple) {
       return (
         <div className="comp-link-card">
-          <Popover
-            trigger="hover"
-            content={popoverContent}
-          >
+          {mode === "edit" ?
+            <Popover
+              trigger="hover"
+              content={popoverContent}
+            >
+              <a
+                className="a-link"
+                onClick={() => this.openUrl({ name, url })}
+              >
+                <Icon type="paper-clip" /> {name}
+              </a>
+            </Popover>
+            :
             <a
               className="a-link"
-              onClick={() => this.openUrl(url)}
+              onClick={() => this.openUrl({ name, url })}
             >
               <Icon type="paper-clip" /> {name}
             </a>
-          </Popover>
+          }
         </div>
       )
     }
@@ -109,7 +143,7 @@ export default class LinkCard extends React.Component {
             >
               <a
                 className="a-link"
-                onClick={() => this.openUrl(url)}
+                onClick={() => this.openUrl({ name, url })}
               >
                 <Icon type="paper-clip" /> {name}
               </a>
@@ -130,7 +164,7 @@ export default class LinkCard extends React.Component {
             <a
               title={name}
               className="a-link"
-              onClick={() => this.openUrl(url)}
+              onClick={() => this.openUrl({ name, url })}
             >
               <Icon type="paper-clip" /> {name}
             </a>
