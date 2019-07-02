@@ -9,7 +9,7 @@ import React from "react";
 import Title from "../Title";
 import LinkCard from "../LinkCard";
 import FolderCard from "../FolderCard";
-import { Tree } from "antd";
+import { Tree, Spin } from "antd";
 import { get } from "@utils/wdio";
 
 const { TreeNode, DirectoryTree } = Tree;
@@ -20,11 +20,16 @@ export default class ClassifyDetail extends React.Component {
 	state = {
 		treeData: [],
 		expandedKeys: [],
+		loaded: false,
 	};
 
 	componentDidMount() {
 		get(ref, (treeData) => {
-			this.setState({ treeData, expandedKeys: ["root"] });
+			this.setState({
+				treeData,
+				expandedKeys: ["root"],
+				loaded: true,
+			});
 		});
 	}
 
@@ -73,6 +78,7 @@ export default class ClassifyDetail extends React.Component {
 			<div className="comp-classify">
 				<Title icon="apartment">分类</Title>
 				<div className="comp-classify-inner">
+					<Spin spinning={!this.state.loaded}>
 					<DirectoryTree
 						multiple
 						expandedKeys={this.state.expandedKeys}
@@ -82,6 +88,7 @@ export default class ClassifyDetail extends React.Component {
 					>
 						{this.renderTreeNodes(this.state.treeData)}
 					</DirectoryTree>
+					</Spin>
 				</div>
 			</div>
 		)
