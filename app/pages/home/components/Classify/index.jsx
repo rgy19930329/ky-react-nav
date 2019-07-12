@@ -28,7 +28,7 @@ export default class Classify extends React.Component {
 	componentDidMount() {
 		this.setState({ expandedKeys: ["root"] });
 		get(ref, (treeData) => {
-			this.setState({ treeData });
+			this.setState({ treeData: treeData || [] });
 		});
 	}
 
@@ -58,7 +58,7 @@ export default class Classify extends React.Component {
 				tree[i].children = [];
 			}
 			tree[i].children.push({
-				title: "标签",
+				title: "书签",
 				url: "",
 				key: uuid.v4(),
 				isLeaf: true
@@ -180,7 +180,7 @@ export default class Classify extends React.Component {
 											e.stopPropagation();
 											this.delOneItem(item.key);
 										}}
-										title="删除标签"
+										title="删除书签"
 									>
 										<Icon type="close-circle" />
 									</a>
@@ -201,7 +201,7 @@ export default class Classify extends React.Component {
 					icon="apartment"
 					slotRight={(
 						<a
-							title="标签导入"
+							title="书签导入"
 							onClick={() => this.setState({ visible: true })}
 							style={{ position: "relative", top: 10 }}
 						>

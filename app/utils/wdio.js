@@ -3,7 +3,7 @@
  */
 
 /**
- * 数据过滤，过滤掉所有值为undefined的字段（因为有这些字段的存在无法执行add操作）
+ * 数据过滤，过滤掉所有值为undefined的字段（因为有这些字段的存在无法执行add和set操作）
  */
 const filter = (data) => {
   const deepCopy = (p, c) => {
@@ -57,6 +57,7 @@ const add = (ref, item) => {
  * 设置数据
  */
 const set = (ref, item) => {
+  console.log(filter(item))
   ref.set(filter(item));
 };
 

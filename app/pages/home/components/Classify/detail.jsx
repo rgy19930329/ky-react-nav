@@ -26,7 +26,7 @@ export default class ClassifyDetail extends React.Component {
 	componentDidMount() {
 		get(ref, (treeData) => {
 			this.setState({
-				treeData,
+				treeData: treeData || [],
 				expandedKeys: ["root"],
 				loaded: true,
 			});
