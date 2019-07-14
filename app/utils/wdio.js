@@ -57,7 +57,6 @@ const add = (ref, item) => {
  * 设置数据
  */
 const set = (ref, item) => {
-  console.log(filter(item))
   ref.set(filter(item));
 };
 
