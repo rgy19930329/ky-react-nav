@@ -29,6 +29,16 @@ class Header extends React.Component {
     });
   }
 
+  onEnsure = () => {
+    const { bookMarksStore } = this.props;
+    if (md5(this.state.value) !== this.state.pwd) {
+      message.error("密码错误");
+      return;
+    }
+    bookMarksStore.goEdit();
+    this.setState({ visible: false, value: "" });
+  };
+
   render() {
     const { bookMarksStore } = this.props;
     return (
@@ -52,21 +62,20 @@ class Header extends React.Component {
           visible={this.state.visible}
           width={300}
           title="请输入密码"
-          onOk={() => {
-            if (md5(this.state.value) !== this.state.pwd) {
-              message.error("密码错误");
-              return;
-            }
-            bookMarksStore.goEdit();
-            this.setState({ visible: false, value: "" });
-          }}
+          onOk={this.onEnsure}
           onCancel={() => this.setState({ visible: false })}
         >
           <div>
             <Input
+              type="password"
               value={this.state.value}
               onChange={(e) => {
                 this.setState({ value: e.target.value });
+              }}
+              onKeyDown={(e) => {
+                if (e.keyCode === 13) {
+                  this.onEnsure();
+                }
               }}
             />
           </div>
